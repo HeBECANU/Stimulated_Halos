@@ -37,11 +37,12 @@ radial_max=0.03;
 
 mirror_azm=1;
 
-%range_azm=[0 2]*pi;
+%range_azm=[0.1 0.9]*pi;
 range_azm=[0.25 0.75]*pi;
 range_elev=[0.25 0.75]*pi;
-steps_azm=4;
-steps_elev=1;
+%range_elev=[0.1 0.9]*pi;
+steps_azm=1;
+steps_elev=4;
 %defining the width seprately allows for under or over sampling bins
 bin_width_azm=range(range_azm)/steps_azm;
 bin_width_elev=range(range_elev)/steps_elev;

@@ -33,7 +33,7 @@ function out=squezing(halo_centered_cells,isverbose)
 
 %================================ START USER INPUT=======================================
 
-plot_sqz_bins=0;%plot sqz with bin #
+plot_sqz_bins=1;%plot sqz with bin #
 plot_sqz_angle=1;%plot sqz with angle
 
 
@@ -49,10 +49,11 @@ plot_sqz_angle=1;%plot sqz with angle
 mirror_azm=0; %use for the mag sensitive halo which you must cut out a region
 
 range_azm=[0 2]*pi;%whole halo
-%range_azm=[0.25 0.75]*pi;%mag sensitvie halo good bit
-range_elev=[0.25 0.75]*pi;
-steps_azm=16;
-steps_elev=2;
+%range_azm=[0.1 1.5]*pi;%mag sensitvie halo good bit
+range_elev=[0 1]*pi;%mag sensitvie halo good bit
+%range_elev=[0.25 0.75]*pi;
+steps_azm=4;%16;
+steps_elev=2;%4;
 %defining the width seprately allows for under or over sampling bins
 bin_width_azm=range(range_azm)/steps_azm;
 bin_width_elev=range(range_elev)/steps_elev;
@@ -96,7 +97,8 @@ for n=1:size(halo_centered_cells,2)
     angle_counts_file={};
     single_halo=halo_centered_cells{n};
     
-    [halo_radial,halo_azm,halo_elev]=ConvToSph(single_halo);
+%     [halo_radial,halo_azm,halo_elev]=ConvToSph(single_halo);
+    [halo_radial,halo_azm,halo_elev]=ConvToSph([single_halo(:,2),single_halo(:,3),single_halo(:,1)]);
     
 %     halo_radial=sqrt(single_halo(:,1).^2+single_halo(:,2).^2+single_halo(:,3).^2);
 %     halo_azm=atan2(single_halo(:,2),single_halo(:,3))+pi;
@@ -198,7 +200,7 @@ end
 
 if plot_sqz_angle
     
-    figure(10)
+    stfig('Variance vs Angle');
     errorbar(angle_var_sd(:,1),angle_var_sd(:,2),angle_var_sd(:,3),'x')
     %title(['Squeezing (',num2str(steps_azm),' azm ',num2str(steps_elev),' elev )']);
     set(gcf,'Color',[1 1 1]);
@@ -227,12 +229,18 @@ unc_other_bin=std(non_opst_bins)/sqrt(length(mean_other_bin));
 min_opst_bin=min(norm_var(angle_pairs==pi));
 
 if  isverbose
-    disp(['mean opst bin' ,num2str(mean_opst_bin),'±',num2str(unc_opst_bin)])
-    disp(['mean other bins',num2str(mean_other_bin),'±',num2str(unc_other_bin)])
-    disp(['min opst bin ',num2str(min_opst_bin)])
+    mean_opst_bin_str = string_value_with_unc(mean_opst_bin,unc_opst_bin,'type','b');
+    mean_other_bins_str = string_value_with_unc(mean_other_bin,unc_other_bin,'type','b');
+    QE_estimate = string_value_with_unc(1-mean_opst_bin,sqrt(unc_opst_bin^2+unc_other_bin^2),'type','b');
+    QE_estimate_adj = string_value_with_unc(mean_other_bin-mean_opst_bin,sqrt(unc_opst_bin^2+unc_other_bin^2),'type','b');
+    disp(['mean opst bin = ' ,mean_opst_bin_str])
+    disp(['mean other bins = ',mean_other_bins_str])
+    disp(['min opst bin = ',num2str(min_opst_bin)])
+    disp(['QE estimate = ',QE_estimate])
+    disp(['QE estimate adjusted = ',QE_estimate_adj])
 end
 if plot_sqz_bins
-    figure(11)
+    stfig('Variance vs Bin');
     plot(1:size(norm_var_opst,2),norm_var_opst,'x',1:size(norm_var_rest,2),norm_var_rest,'+')
     xlabel('Bin Pair Number')
     ylabel('Normalised Variance')

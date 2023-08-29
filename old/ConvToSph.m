@@ -1,7 +1,7 @@
 function [halo_radial,halo_azm,halo_elev]=ConvToSph(single_halo)
 %======================================90char=============================================
 %+++++++++++++++++++++++++++++++++++++++ABOUT+++++++++++++++++++++++++++++++++++++++++++++
-%this function converts centered TXY data into radial cord
+%this function converts centered TXY data into radial cord %zxy?
 
 % ref system
 % bec's are at the poles
